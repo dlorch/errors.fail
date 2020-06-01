@@ -3,3 +3,5 @@ steps:
   args: [ 'build', '-t', 'gcr.io/dlorch-bd021/errors-fail', '.' ]
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/dlorch-bd021/errors-fail']
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['run', 'deploy', '--image', 'gcr.io/dlorch-bd021/errors-fail', '--platform', 'managed']
