@@ -13,6 +13,8 @@ import (
 )
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	session.SaveBool("http_probe", false, r)
+
 	p, err := strconv.ParseFloat(r.URL.Path[1:], 32)
 	if err != nil || p < 0 || p > 1.0 {
 		p = 1.0
