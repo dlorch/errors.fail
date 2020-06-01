@@ -1,0 +1,5 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/dlorch-bd021/errors-fail', '.' ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/dlorch-bd021/errors-fail']
