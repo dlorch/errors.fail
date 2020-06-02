@@ -1,7 +1,7 @@
 errors.fail
 ===========
 
-Probing endpoint for blackbox_exporter with configurable errors.
+Probing endpoint for blackbox_exporter with configurable errors: https://errors.fail/
 
 Configuration
 -------------
