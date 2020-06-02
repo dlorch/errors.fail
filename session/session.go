@@ -87,7 +87,7 @@ func isValidSessionID(session string) bool {
 	return true
 }
 
-func SaveString(name string, value string, r *http.Request) {
+func SaveBool(name string, value bool, r *http.Request) {
 	_, err := client.Collection("sessions").Doc(SessionID).Set(ctx, map[string]interface{}{
 		name:          value,
 		"last_active": time.Now(),
@@ -99,14 +99,11 @@ func SaveString(name string, value string, r *http.Request) {
 	}
 }
 
-func SaveBool(name string, value bool, r *http.Request) {
-	_, err := client.Collection("sessions").Doc(SessionID).Set(ctx, map[string]interface{}{
-		name:          value,
-		"last_active": time.Now(),
-		"user_agent":  r.UserAgent(),
-		"remote_addr": r.RemoteAddr,
-	}, firestore.MergeAll)
+func ReadBoolOrDefault(name string, defaultValue bool) bool {
+	dsnap, err := client.Collection("sessions").Doc(SessionID).Get(ctx)
 	if err != nil {
-		log.Fatalf("Failed setting value for session \"%s\": %v", SessionID, err)
+		return defaultValue
 	}
+	result := dsnap.Data()["http_probe"].(bool)
+	return result
 }
