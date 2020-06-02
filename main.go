@@ -3,33 +3,70 @@ package main
 import (
 	"fmt"
 	"github.com/dlorch/errors.fail/session"
-	"html"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
-	"strconv"
-	"time"
 )
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	p, err := strconv.ParseFloat(r.URL.Path[1:], 32)
-	if err != nil || p < 0 || p > 1.0 {
-		p = 1.0
-	}
-	if rand.Float32() < float32(p) {
-		fmt.Fprintf(w, r.URL.RawQuery)
-		fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+func mainPage(w http.ResponseWriter, r *http.Request) {
+	probe := session.ReadBoolOrDefault("http_probe", true)
+
+	fmt.Fprintf(w, "<!DOCTYPE html>\n")
+	fmt.Fprintf(w, "<html>\n")
+	fmt.Fprintf(w, "<head>\n")
+	fmt.Fprintf(w, "<title>errors.fail - A free service that provides probing errors to your monitoring solutions</title>\n")
+	fmt.Fprintf(w, "</head>\n")
+	fmt.Fprintf(w, "<body>\n")
+	fmt.Fprintf(w, "<h1>errors.fail</h1>\n")
+	fmt.Fprintf(w, "<p>A free service that provides probing errors to your monitoring solutions.</p>\n")
+	fmt.Fprintf(w, "<h2>HTTPS Probe</h2>\n")
+	fmt.Fprintf(w, "<p><b>Endpoint:</b> curl -v <a href=\"https://probe.errors.fail/?%s\">https://probe.errors.fail/?%s</a>\n", session.SessionID, session.SessionID)
+	if probe {
+		fmt.Fprintf(w, "<p><b>Setting:</b> 200 OK</p>\n")
 	} else {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "<h1>500 Internal Server Error</h1><p>Intentionally failing this request with probabilty of %.2f.</p>", p)
+		fmt.Fprintf(w, "<p><b>Setting:</b> 500 Internal Server Error</p>\n")
+	}
+	fmt.Fprintf(w, "<form action=\"/settings?%s\" method=\"POST\">\n", session.SessionID)
+	fmt.Fprintf(w, "<input type=\"checkbox\" name=\"http_probe\"")
+	if probe {
+		fmt.Fprintf(w, " checked")
+	}
+	fmt.Fprintf(w, "/>Enabled\n")
+	fmt.Fprintf(w, "<input type=\"submit\" value=\"Change Setting\"/>\n")
+	fmt.Fprintf(w, "</form>\n")
+	fmt.Fprintf(w, "<h2>ICMP Probe</h2>\n")
+	fmt.Fprintf(w, "<p><b>No artificial packet loss:</b> ping probe.errors.fail</p>\n")
+	fmt.Fprintf(w, "<p><b>50%% packet loss:</b> ping packetloss.errors.fail</p>\n")
+	fmt.Fprintf(w, "<h2>Soon: Expired TLS/SSL Certificate</h2>\n")
+	fmt.Fprintf(w, "<p><b>Endpoint:</b> curl -v <a href=\"https://expired.errors.fail\">https://expired.errors.fail</a></p>\n")
+	fmt.Fprintf(w, "<h2>Contact</h2>\n")
+	fmt.Fprintf(w, "<p>Created by <a href=\"https://dlorch.me/\">Daniel Lorch</a> in 2020</p>\n")
+	fmt.Fprintf(w, "</body>\n")
+	fmt.Fprintf(w, "</html>\n")
+}
+
+func changeSettings(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "Could not parse form values: %v", err)
+			return
+		}
+
+		probe := r.FormValue("http_probe") != ""
+		session.SaveBool("http_probe", probe, r)
+
+		w.Header().Add("Location", fmt.Sprintf("/?%s", session.SessionID))
+		w.WriteHeader(http.StatusFound)
+		return
+	default:
+		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-
-	http.HandleFunc("/", session.WithSession(handler))
+	http.HandleFunc("/settings", session.WithSession(changeSettings))
+	http.HandleFunc("/", session.WithSession(mainPage))
 
 	port := os.Getenv("PORT")
 	if port == "" {
