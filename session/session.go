@@ -54,10 +54,11 @@ func WithSession(handler func(http.ResponseWriter, *http.Request)) func(http.Res
 		}
 
 		sessionCookie := http.Cookie{
-			Name:    "sessionID",
-			Value:   SessionID,
-			Domain:  config.CookieDomain, // "if a domain is specified, then subdomains are always included" (Set-Cookie - HTTP | MDN)
-			Expires: time.Now().Add(365 * 24 * time.Hour),
+			Name:     "sessionID",
+			Value:    SessionID,
+			Domain:   config.CookieDomain, // "if a domain is specified, then subdomains are always included" (Set-Cookie - HTTP | MDN)
+			Expires:  time.Now().Add(365 * 24 * time.Hour),
+			SameSite: http.SameSiteStrictMode,
 		}
 		http.SetCookie(w, &sessionCookie)
 
