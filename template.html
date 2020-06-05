@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>errors.fail - A free service that provides probing errors to your monitoring solutions</title>
+</head>
+<body>
+    <h1>errors.fail</h1>
+    <p>A free service that provides probing errors to your monitoring solutions.</p>
+    <h2>HTTPS Probe</h2>
+    <p><b>Endpoint:</b> curl -v <a href="https://probe.errors.fail/?{{.SessionID}}">https://probe.errors.fail/?{{.SessionID}}</a>
+    <p><b>Setting:</b> 200 OK</p>
+    <form action="/settings?{{.SessionID}}" method="POST">
+        <input type="checkbox" name="http_probe"{{if .HttpProbe}} checked{{end}}/>Enabled
+    <input type="submit" value="Change Setting"/>
+    </form>
+    <h2>ICMP Probe</h2>
+    <p><b>No artificial packet loss:</b> ping probe.errors.fail</p>
+    <p><b>50% packet loss:</b> ping packetloss.errors.fail</p>
+    <h2>Soon: Expired TLS/SSL Certificate</h2>
+    <p><b>Endpoint:</b> curl -v <a href="https://expired.errors.fail">https://expired.errors.fail</a></p>
+    <h2>Contact</h2>
+    <p>Created by <a href="https://dlorch.me/">Daniel Lorch</a> in 2020 | Source Code on <a href="https://github.com/dlorch/errors.fail">GitHub</a></p>
+</body>
+</html>

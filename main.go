@@ -3,46 +3,34 @@ package main
 import (
 	"fmt"
 	"github.com/dlorch/errors.fail/session"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"text/template"
+)
+
+var (
+	pageTemplate string
 )
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
-	probe := session.ReadBoolOrDefault("http_probe", true)
+	values := struct {
+		SessionID string
+		HttpProbe bool
+	}{
+		SessionID: session.SessionID,
+		HttpProbe: session.ReadBoolOrDefault("http_probe", true),
+	}
 
-	fmt.Fprintf(w, "<!DOCTYPE html>\n")
-	fmt.Fprintf(w, "<html>\n")
-	fmt.Fprintf(w, "<head>\n")
-	fmt.Fprintf(w, "<title>errors.fail - A free service that provides probing errors to your monitoring solutions</title>\n")
-	fmt.Fprintf(w, "</head>\n")
-	fmt.Fprintf(w, "<body>\n")
-	fmt.Fprintf(w, "<h1>errors.fail</h1>\n")
-	fmt.Fprintf(w, "<p>A free service that provides probing errors to your monitoring solutions.</p>\n")
-	fmt.Fprintf(w, "<h2>HTTPS Probe</h2>\n")
-	fmt.Fprintf(w, "<p><b>Endpoint:</b> curl -v <a href=\"https://probe.errors.fail/?%s\">https://probe.errors.fail/?%s</a>\n", session.SessionID, session.SessionID)
-	if probe {
-		fmt.Fprintf(w, "<p><b>Setting:</b> 200 OK</p>\n")
-	} else {
-		fmt.Fprintf(w, "<p><b>Setting:</b> 500 Internal Server Error</p>\n")
+	tmpl, err := template.New("pageTemplate").Parse(pageTemplate)
+	if err != nil {
+		log.Fatal(err)
 	}
-	fmt.Fprintf(w, "<form action=\"/settings?%s\" method=\"POST\">\n", session.SessionID)
-	fmt.Fprintf(w, "<input type=\"checkbox\" name=\"http_probe\"")
-	if probe {
-		fmt.Fprintf(w, " checked")
+	err = tmpl.Execute(w, values)
+	if err != nil {
+		log.Fatal(err)
 	}
-	fmt.Fprintf(w, "/>Enabled\n")
-	fmt.Fprintf(w, "<input type=\"submit\" value=\"Change Setting\"/>\n")
-	fmt.Fprintf(w, "</form>\n")
-	fmt.Fprintf(w, "<h2>ICMP Probe</h2>\n")
-	fmt.Fprintf(w, "<p><b>No artificial packet loss:</b> ping probe.errors.fail</p>\n")
-	fmt.Fprintf(w, "<p><b>50%% packet loss:</b> ping packetloss.errors.fail</p>\n")
-	fmt.Fprintf(w, "<h2>Soon: Expired TLS/SSL Certificate</h2>\n")
-	fmt.Fprintf(w, "<p><b>Endpoint:</b> curl -v <a href=\"https://expired.errors.fail\">https://expired.errors.fail</a></p>\n")
-	fmt.Fprintf(w, "<h2>Contact</h2>\n")
-	fmt.Fprintf(w, "<p>Created by <a href=\"https://dlorch.me/\">Daniel Lorch</a> in 2020</p>\n")
-	fmt.Fprintf(w, "</body>\n")
-	fmt.Fprintf(w, "</html>\n")
 }
 
 func changeSettings(w http.ResponseWriter, r *http.Request) {
@@ -72,6 +60,12 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+
+	b, err := ioutil.ReadFile("template.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	pageTemplate = string(b)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
