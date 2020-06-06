@@ -2,23 +2,256 @@
 <html>
 <head>
     <title>errors.fail - A free service that provides probing errors to your monitoring solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo&display=swap" rel="stylesheet">
+    <style>
+body {
+    background-color: #5c4084;
+    padding: 50px;
+    color: #555;
+    font-family: 'Exo', sans-serif;
+}
+
+.fa {
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.text-success {
+    color: #5c4084;
+}
+
+.toggle-label {
+    display: inline-block;
+    padding: 2px 0 0 4px;
+    vertical-align: top;
+    font-size: 24px;
+    color: #777;
+}
+
+.container {
+    background-color: #fff;
+    padding: 40px 80px;
+    border-radius: 8px;
+}
+
+.heading {
+    text-align: center;
+}
+.heading h1 {
+    background: -webkit-linear-gradient(#fff, #999);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
+    text-align: center;
+    margin: 0 0 5px 0;
+    font-weight: 900;
+    font-size: 4rem;
+    color: #fff;
+}
+.heading h4 {
+    color: #a990cc;
+    text-align: center;
+    margin: 0 0 35px 0;
+    font-weight: 400;
+    font-size: 24px;
+}
+
+.footer p {
+    color: #a990cc;
+    text-align: center;
+}
+
+.footer a {
+    color: #a990cc;
+}
+
+@media (min-width: 992px) {
+    .options {
+        padding-top: 80px;
+    }
+}
+
+.btn {
+    outline: none !important;
+}
+
+.btn.btn-primary {
+    background-color: #5c4084;
+    border-color: #5c4084;
+    outline: none;
+}
+.btn.btn-primary:hover {
+    background-color: #442f62;
+    border-color: #442f62;
+}
+.btn.btn-primary:active, .btn.btn-primary:focus {
+    background-color: #684895;
+    border-color: #684895;
+}
+
+.btn.btn-default:hover {
+    background-color: #442f62;
+    border-color: #442f62;
+    color: #fff;
+}
+.btn.btn-default:active, .btn.btn-default:focus {
+    background-color: #684895;
+    border-color: #684895;
+    color: #fff;
+}
+    </style>
 </head>
 <body>
-    <h1>errors.fail</h1>
-    <p>A free service that provides probing errors to your monitoring solutions.</p>
-    <h2>HTTPS Probe</h2>
-    <p><b>Endpoint:</b> curl -v <a href="https://probe.errors.fail/?{{.SessionID}}">https://probe.errors.fail/?{{.SessionID}}</a>
-    <p><b>Setting:</b> 200 OK</p>
-    <form action="/settings?{{.SessionID}}" method="POST">
-        <input type="checkbox" name="http_probe"{{if .HttpProbe}} checked{{end}}/>Enabled
-    <input type="submit" value="Change Setting"/>
-    </form>
-    <h2>ICMP Probe</h2>
-    <p><b>No artificial packet loss:</b> ping probe.errors.fail</p>
-    <p><b>50% packet loss:</b> ping packetloss.errors.fail</p>
-    <h2>Soon: Expired TLS/SSL Certificate</h2>
-    <p><b>Endpoint:</b> curl -v <a href="https://expired.errors.fail">https://expired.errors.fail</a></p>
-    <h2>Contact</h2>
-    <p>Created by <a href="https://dlorch.me/">Daniel Lorch</a> in 2020 | Source Code on <a href="https://github.com/dlorch/errors.fail">GitHub</a></p>
+    <div class="heading">
+        <h1>errors.fail</h1>
+        <h4>A free service that provides probing errors to your monitoring solutions.</h4>
+    </div>
+    <div class="container" id="app">
+       <h3>Welcome</h3>
+       <p>Are you building up SLI/SLO dashboards or a monitoring solution? Would you like
+         see the effect of a failing or degraded service? Then you can use the probing
+         targets below to simulate these errors to test your monitoring and alerting
+         rules.</p>
+
+       <hr />
+
+       <h3>HTTPS Probe</h3>
+
+       <p>The HTTPS endpoint can be configured to either return a 200 OK or a
+          500 Internal Server error. Blackbox Exporter will return a <code>probe_success = 0</code>
+          for the latter status code, indicating an error.</p>
+
+       <table>
+       <tr>
+           <td><b>Endpoint:</b></td>
+           <td>curl -v <a href="https://probe.errors.fail/?{{.SessionID}}">https://probe.errors.fail/?{{.SessionID}}</a></td>
+       </tr>
+       <tr>
+           <td><b>Setting:</b></td>
+           <td>{{if .HttpProbe}}200 OK{{else}}500 Internal Server Error{{end}}</td>
+       </tr>
+       </table>
+
+       <form action="/settings?{{.SessionID}}" method="POST">
+       <input type="checkbox" name="http_probe"{{if .HttpProbe}} checked{{end}}/>Enabled
+       <input type="submit" value="Change Setting"/>
+       </form>
+
+       <h3>ICMP Probe (Ping)</h3>
+
+       <p>Two endpoints are available for your <code>ping</code> probes. One
+          endpoint drops ICMP request with a probabilty of 0.5, causing 50%
+          packet loss.</p>
+
+       <table>
+       <tr>
+           <td><b>No artificial packet loss:</b></td>
+           <td>ping probe.errors.fail</td>
+       </tr>
+       <tr>
+           <td><b>50% packet loss:</b></td>
+           <td>ping packetloss.errors.fail</td>
+       </tr>
+       </table>
+
+       <h3><i>Soon:</i> Expired TLS/SSL Certificate</h3>
+
+       <p>Did you know that Blackbox Exporter returns the number of days until expiry of
+         a TLS/SSL certificate? You can easily build alert rules or dashboards using this
+         information. Soon, there will be an endpoint available with an expired certificate
+         for you to play with.</p>
+
+       <table>
+       <tr>
+           <td><b>Endpoint:</b></td>
+           <td>curl -v <a href="https://expired.errors.fail">https://expired.errors.fail</td>
+       </tr>
+       </table>
+
+       <h3>Session Management</h3>
+
+       <p>Your session ID is <b>{{.SessionID}}</b>. The session uniquely identifies you and
+         is used to store your personal settings. Do not share it with anyone.</p>
+
+       <form action="/new_session?{{.SessionID}}" method="POST">
+       <input type="submit" value="Create New Session ID"/>
+       </form>
+
+       <hr />
+
+       <h3>Sample Configuration</h3>
+
+       <p>Find below sample configuration for Prometheus, Blackbox Exporter and Grafana,
+          as well as the Docker commands required to execute these tools.</p>
+
+       <h4><a href="https://github.com/prometheus/blackbox_exporter">Blackbox Exporter</a>:</h4>
+
+<pre>
+modules:
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      preferred_ip_protocol: ip4
+</pre>
+
+       <p>Run Blackbox Exporter with: <code>docker run --rm -d -p 9115:9115 --name blackbox_exporter -v `pwd`:/config prom/blackbox-exporter:master --config.file=/config/blackbox.yml</code></p>
+
+
+       <h4><a href="https://prometheus.io/">Prometheus</a>:</h4>
+
+<pre>
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: []
+    scheme: http
+    timeout: 10s
+    api_version: v1
+scrape_configs:
+- job_name: prometheus
+  honor_timestamps: true
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  scheme: http
+  static_configs:
+  - targets:
+    - localhost:9090
+- job_name: blackbox
+  metrics_path: /probe
+  params:
+    module: [http_2xx] # Looking for a HTTP 200 response.
+  static_configs:
+  - targets:
+    - https://probe.errors.fail/?{{.SessionID}}
+  relabel_configs:
+  - source_labels: [__address__]
+    target_label: __param_target
+  - source_labels: [__param_target]
+    target_label: instance
+  - target_label: __address__
+    replacement: host.docker.internal:9115
+</pre>
+
+       <p>Run Prometheus with: <code>docker run --name prometheus -v `pwd`/prometheus.yml:/etc/prometheus/prometheus.yml -d -p 9090:9090 prom/prometheus</code></p>
+
+       <h4><a href="https://grafana.com/">Grafana</a></h4>
+
+       <p>Run Grafana with: <code>docker run -d --name=grafana -p 3000:3000 grafana/grafana</code></p>
+
+       <p>Then configure Prometheus running on <code>http://host.docker.internal:9090</code> as data source and configure your dashboard.</p>
+
+   </div>
+
+   <div class="footer">
+       <p>Created by <a href="https://dlorch.me/">Daniel Lorch</a> in 2020 | Source Code on <a href="https://github.com/dlorch/errors.fail">GitHub</a> | <a href="mailto:dlorch@gmail.com">Contact</a></p>
+   </div>
+
 </body>
 </html>
+
+

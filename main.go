@@ -49,11 +49,27 @@ func changeSettings(w http.ResponseWriter, r *http.Request) {
 		return
 	default:
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "400 Bad Request")
+	}
+}
+
+func newSession(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		session.SessionID = session.GenerateUnsafeSessionID()
+
+		w.Header().Add("Location", fmt.Sprintf("/?%s", session.SessionID))
+		w.WriteHeader(http.StatusFound)
+		return
+	default:
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "400 Bad Request")
 	}
 }
 
 func main() {
 	http.HandleFunc("/settings", session.WithSession(changeSettings))
+	http.HandleFunc("/new_session", session.WithSession(newSession))
 	http.HandleFunc("/", session.WithSession(mainPage))
 
 	port := os.Getenv("PORT")

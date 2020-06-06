@@ -45,7 +45,7 @@ func WithSession(handler func(http.ResponseWriter, *http.Request)) func(http.Res
 
 			// no valid session ID found -> create new session
 			if !isValidSessionID(SessionID) {
-				SessionID = generateUnsafeSessionID()
+				SessionID = GenerateUnsafeSessionID()
 			}
 
 			w.Header().Add("Location", fmt.Sprintf("%s?%s", r.URL.Path, SessionID))
@@ -66,7 +66,7 @@ func WithSession(handler func(http.ResponseWriter, *http.Request)) func(http.Res
 	}
 }
 
-func generateUnsafeSessionID() string {
+func GenerateUnsafeSessionID() string {
 	b := make([]byte, sessionLength)
 	for i := range b {
 		b[i] = charset[seededRand.Intn(len(charset))]
