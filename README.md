@@ -18,3 +18,4 @@ Sub-Projects
 ------------
 
 * https://github.com/dlorch/probe.errors.fail HTTPS endpoint for probing
+* https://github.com/dlorch/expired.errors.fail Expired TLS/SSL certificate and ICMP endpoint packetloss.errors.fail
