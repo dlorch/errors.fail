@@ -31,3 +31,4 @@ errors.fail runs on the Google Cloud Platform. Following tools were used:
 * Cloud Build
 * Source Repositories
 * Cloud Firestore
+* Cloud Storage
