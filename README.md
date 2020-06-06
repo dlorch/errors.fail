@@ -19,3 +19,15 @@ Sub-Projects
 
 * https://github.com/dlorch/probe.errors.fail HTTPS endpoint for probing
 * https://github.com/dlorch/expired.errors.fail Expired TLS/SSL certificate and ICMP endpoint packetloss.errors.fail
+
+Running
+-------
+
+errors.fail runs on the Google Cloud Platform. Following tools were used:
+* Cloud Run
+* Cloud DNS
+* Compute
+* Secrets Manager
+* Cloud Build
+* Source Repositories
+* Cloud Firestore
