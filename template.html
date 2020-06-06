@@ -170,7 +170,8 @@ body {
        <h3>Session Management</h3>
 
        <p>Your session ID is <b>{{.SessionID}}</b>. The session uniquely identifies you and
-         is used to store your personal settings. Do not share it with anyone.</p>
+         is used to store your personal settings. Do not share it with anyone. If you would
+         like to change it, click below to create a new session ID.</p>
 
        <form action="/new_session?{{.SessionID}}" method="POST">
        <input type="submit" value="Create New Session ID"/>
