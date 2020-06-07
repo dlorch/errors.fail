@@ -3,10 +3,10 @@ errors.fail
 
 Probing endpoint for blackbox_exporter with configurable errors: https://errors.fail/
 
-Configuration
--------------
+Environment
+-----------
 
-Environment:
+Required environment variables to run the Golang webserver:
 
 ```
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/secret.json
@@ -14,7 +14,18 @@ export PROJECT_ID="dlorch-bd021"
 export COOKIE_DOMAIN="errors.fail"
 ```
 
-First time manual setup:
+For the Google application credentials, create a service account for the project and
+assign "Owner" privileges to it, then retrieve the service account's secret as .json
+file.
+
+Run the server with ```go run main.go```.
+
+Infrastructure as Code - CI/CD
+------------------------------
+
+All required infrastructure is described "as code" in Terraform.
+
+First time manual project setup:
 * Create Cloud Storage bucket for Terraform state ```errors-fail-terraform-state```
 * Setup Cloud Build triggers for each project and sub-project (see below)
   * Assign roles "Compute Instance Admin (v1)", "DNS Administrator" and "Cloud Run Admin" to Cloud Build service account
