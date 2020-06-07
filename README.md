@@ -45,5 +45,6 @@ First time manual project setup:
 * Setup Cloud Build triggers for each project and sub-project (see below)
   * Assign roles "Compute Instance Admin (v1)", "DNS Administrator" and "Cloud Run Admin" to Cloud Build service account
 * Add Cloud Build service account to verified owners of "errors.fail" domain in https://www.google.com/webmasters/verification/home
+* TLS/SSL certificate for expired.errors.fail created with Let's Encrypt and Certbot as described here: https://certbot.eff.org/lets-encrypt/debianstretch-nginx, then take a copy with ```sudo tar cf letsencrypt.tar /etc/letsencrypt``` and store it as a secret ```expired-errors-fail_letsencrypt-tar``` in the Secret Manager
 
 Enjoy! Daniel Lorch, 2020
