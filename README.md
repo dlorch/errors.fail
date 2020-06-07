@@ -20,27 +20,17 @@ file.
 
 Run the server with ```go run main.go```.
 
-Infrastructure as Code - CI/CD
-------------------------------
-
-All required infrastructure is described "as code" in Terraform.
-
-First time manual project setup:
-* Create Cloud Storage bucket for Terraform state ```errors-fail-terraform-state```
-* Setup Cloud Build triggers for each project and sub-project (see below)
-  * Assign roles "Compute Instance Admin (v1)", "DNS Administrator" and "Cloud Run Admin" to Cloud Build service account
-* Add Cloud Build service account to verified owners of "errors.fail" domain in https://www.google.com/webmasters/verification/home
-
 Sub-Projects
 ------------
 
 * https://github.com/dlorch/probe.errors.fail HTTPS endpoint for probing
 * https://github.com/dlorch/expired.errors.fail Expired TLS/SSL certificate and ICMP endpoint packetloss.errors.fail
 
-Running
--------
+Infrastructure as Code - CI/CD
+------------------------------
 
-errors.fail runs on the Google Cloud Platform. Following tools were used:
+All required infrastructure is described "as code" in Terraform. errors.fail runs on
+the Google Cloud Platform. Following tools were used:
 * Cloud Run
 * Cloud DNS
 * Compute
@@ -49,3 +39,11 @@ errors.fail runs on the Google Cloud Platform. Following tools were used:
 * Source Repositories
 * Cloud Firestore
 * Cloud Storage
+
+First time manual project setup:
+* Create Cloud Storage bucket for Terraform state ```errors-fail-terraform-state```
+* Setup Cloud Build triggers for each project and sub-project (see below)
+  * Assign roles "Compute Instance Admin (v1)", "DNS Administrator" and "Cloud Run Admin" to Cloud Build service account
+* Add Cloud Build service account to verified owners of "errors.fail" domain in https://www.google.com/webmasters/verification/home
+
+Enjoy! Daniel Lorch, 2020
