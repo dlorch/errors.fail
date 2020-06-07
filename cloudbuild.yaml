@@ -8,4 +8,4 @@ steps:
 - name: 'hashicorp/terraform'
   args: ['init', 'deployments']
 - name: 'hashicorp/terraform'
-  args: ['apply', 'deployments', '-auto-approve']
+  args: ['apply', '-auto-approve', 'deployments']
