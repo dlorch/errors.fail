@@ -18,7 +18,7 @@ First time manual setup:
 * Create Cloud Storage bucket for Terraform state ```errors-fail-terraform-state```
 * Setup Cloud Build triggers for each project and sub-project (see below)
   * Assign roles "Compute Instance Admin (v1)", "DNS Administrator" and "Cloud Run Admin" to Cloud Build service account
-* Add Cloud Build service account to verified owners of "errors.fail" domain in https://www.google.com/webmasters/verification/home:
+* Add Cloud Build service account to verified owners of "errors.fail" domain in https://www.google.com/webmasters/verification/home
 
 Sub-Projects
 ------------
