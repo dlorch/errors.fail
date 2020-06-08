@@ -48,4 +48,6 @@ First time manual project setup:
 * TLS/SSL certificate for expired.errors.fail created with Let's Encrypt and Certbot as described here: https://certbot.eff.org/lets-encrypt/debianstretch-nginx, then take a copy with ```sudo tar cf letsencrypt.tar /etc/letsencrypt``` and store it as a secret ```expired-errors-fail_letsencrypt-tar``` in the Secret Manager
 * Give Compute service account "Secret Manager Secret Accessor" privileges
 
+![Cloud Build screenshot](https://gitlab.com/dlorch/errors-fail/blob/master/assets/cloud-build.png?raw=true)
+
 Enjoy! Daniel Lorch, 2020
