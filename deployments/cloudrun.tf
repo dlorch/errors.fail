@@ -5,7 +5,9 @@ resource "google_cloud_run_service" "errors-fail-service" {
   template {
     spec {
       containers {
-        image = "gcr.io/dlorch-bd021/errors-fail"
+        // the ":latest" tag is very important, otherwise Terraform will not
+        // re-deploy the Cloud Run service even if the image changes
+        image = "gcr.io/dlorch-bd021/errors-fail:latest"
         env {
           name  = "PROJECT_ID"
           value = "dlorch-bd021"
