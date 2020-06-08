@@ -11,9 +11,13 @@ body {
     font-family: 'Exo', sans-serif;
 }
 
+/* the toggle switches are chacters from font awesome */
 .fa {
-    font-size: 40px;
     cursor: pointer;
+}
+
+.toggle {
+    font-size: 30px;
 }
 
 .text-success {
@@ -22,10 +26,8 @@ body {
 
 .toggle-label {
     display: inline-block;
-    padding: 2px 0 0 4px;
+    padding: 9px 0 0 2px;
     vertical-align: top;
-    font-size: 24px;
-    color: #777;
 }
 
 .container {
@@ -99,6 +101,9 @@ body {
     color: #fff;
 }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>   
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
     <div class="heading">
@@ -127,14 +132,11 @@ body {
        </tr>
        <tr>
            <td><b>Setting:</b></td>
-           <td>{{if .HttpProbe}}200 OK{{else}}500 Internal Server Error{{end}}</td>
+           <td>
+             <vue-toggle enabled_label="200 OK" disabled_label="500 Internal Server Error"></vue-toggle>
+           </td>
        </tr>
        </table>
-
-       <form action="/settings?{{.SessionID}}" method="POST">
-       <input type="checkbox" name="http_probe"{{if .HttpProbe}} checked{{end}}/>Enabled
-       <input type="submit" value="Change Setting"/>
-       </form>
 
        <h3>ICMP Probe (Ping)</h3>
 
@@ -197,7 +199,6 @@ modules:
 
        <p>Run Blackbox Exporter with: <code>docker run --rm -d -p 9115:9115 --name blackbox_exporter -v `pwd`:/config prom/blackbox-exporter:master --config.file=/config/blackbox.yml</code></p>
 
-
        <h4><a href="https://prometheus.io/">Prometheus</a>:</h4>
 
 <pre>
@@ -252,7 +253,32 @@ scrape_configs:
        <p>Created by <a href="https://dlorch.me/">Daniel Lorch</a> in 2020 | Source Code on <a href="https://github.com/dlorch/errors.fail">GitHub</a> | <a href="mailto:dlorch@gmail.com">Contact</a></p>
    </div>
 
+   <script>
+// adapted from https://vuejsexamples.com/bootstrap-vue-toggle-status-switch/
+Vue.component('vue-toggle', {
+  template: `<span><span class="toggle"><span class="fa" v-bind:class="{'fa-toggle-on': toggled, 'fa-toggle-off': !toggled, 'text-success': toggled, 'text-muted': !toggled}" @click="toggled = !toggled; changeToggle($event)"></span></span> <span class="toggle-label" v-show="toggled">{{"{{"}} enabled_label {{"}}"}}</span><span class="toggle-label" v-show="!toggled">{{"{{"}} disabled_label {{"}}"}}</span></span>`,
+  props: ['enabled_label','disabled_label'],
+  data() {
+    return {
+      toggled: {{if .HttpProbe}}true{{else}}false{{end}},
+    }
+  },
+  methods: {
+    changeToggle(event) {
+      axios.post('/settings?{{.SessionID}}', {
+        http_probe: this.toggled
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
+  } 
+});
+
+new Vue({
+  el: '#app'
+});
+   </script>
+
 </body>
 </html>
-
-

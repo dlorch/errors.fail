@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/dlorch/errors.fail/session"
 	"io/ioutil"
@@ -33,19 +34,24 @@ func mainPage(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type settings struct {
+	HTTP_Probe bool `json:"http_probe"`
+}
+
 func changeSettings(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		if err := r.ParseForm(); err != nil {
-			fmt.Fprintf(w, "Could not parse form values: %v", err)
+		decoder := json.NewDecoder(r.Body)
+		var s settings
+		err := decoder.Decode(&s)
+		if err != nil {
+			fmt.Fprintf(w, "Could not parse JSON values: %v", err)
 			return
 		}
 
-		probe := r.FormValue("http_probe") != ""
-		session.SaveBool("http_probe", probe, r)
+		session.SaveBool("http_probe", s.HTTP_Probe, r)
 
-		w.Header().Add("Location", fmt.Sprintf("/?%s", session.SessionID))
-		w.WriteHeader(http.StatusFound)
+		fmt.Fprintf(w, "OK")
 		return
 	default:
 		w.WriteHeader(http.StatusBadRequest)
