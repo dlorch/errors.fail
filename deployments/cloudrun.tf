@@ -34,7 +34,7 @@ resource "google_cloud_run_service_iam_member" "errors-fail-iam-member" {
   member   = "allUsers"
 }
 
-// Make sure to add service account to verified owners of domain
+// Make sure to add the Cloud Build service account to verified owners of domain
 // in https://www.google.com/webmasters/verification/home
 resource "google_cloud_run_domain_mapping" "errors-fail-domain-mapping" {
   location = "us-east1"
