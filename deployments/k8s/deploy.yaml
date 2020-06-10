@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: errors-fail
+  labels:
+    app: errors-fail
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: errors-fail
+  template:
+    metadata:
+      labels:
+        app: errors-fail
+    spec:
+      containers:
+      - name: errors-fail
+        image: gcr.io/dlorch-bd021/errors-fail:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: PROJECT_ID
+          value: "dlorch-bd021"
+        - name: COOKIE_DOMAIN
+          value: "errors.fail"
